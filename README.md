@@ -1,6 +1,96 @@
 # 🍑 PeachPaperLib
 
-Eine PaperMC-Library;
+A PaperMC Library.
+
+> [!IMPORTANT]
+> **Project Status:** This is a **hobby project**. Updates and support depend on availability and motivation. There is no guarantee for immediate bug fixes, but feedback and interaction are expressly encouraged!
+
+---
+
+### 📌 Compatibility
+| Feature | Status |
+| :--- | :--- |
+| **Supported MC Version** | **1.21.10** |
+| **Platform** | PaperMC and forks |
+| **Java Version** | 21+ |
+
+*Note: Only the version listed above is officially supported by the latest library version. Other versions might work but are not actively tested.*
+
+---
+
+## 🚀 Installation
+
+Add the library to your project via **JitPack**.
+[![](https://jitpack.io/v/PeachBiscuit174/PeachPaperLib.svg)](https://jitpack.io/#PeachBiscuit174/PeachPaperLib)
+
+### Maven (`pom.xml`)
+```xml
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>[https://jitpack.io](https://jitpack.io)</url>
+        </repository>
+    </repositories>
+
+    <dependency>
+        <groupId>com.github.PeachBiscuit174</groupId>
+        <artifactId>PeachPaperLib</artifactId>
+        <version>v1.0.0</version>
+    </dependency>
+```
+
+> [!IMPORTANT]
+> To ensure the library loads correctly, you must also add it as a dependency in your `plugin.yml` or `paper-plugin.yml`.
+
+---
+
+## 🛠 API Usage
+
+Usage is centralized via the `API` class.
+
+**Example:**
+```java
+// Creates an ItemStack of a head via Base64 string
+ItemStack head = API.getCustomThingsManager().getCustomHeadUtils().getCustomHead("eyJ0ZXh0dXJlcyI6...");
+```
+or
+```java
+CustomHeadsAPI customHeadsAPI = API.getCustomThingsManager().getCustomHeadUtils();
+ItemStack head = customHeadsAPI.getCustomHead("eyJ0ZXh0dXJlcyI6...");
+```
+
+---
+
+## 💡 Features & Support
+
+Even though this is a hobby project, your opinion matters!
+
+* **Feature Requests:** Have an idea for a new tool? Feel free to open an issue with the `enhancement` label. I'll take a look when I find the time!
+* **Bug Reports:** If something isn't working, please report it via [GitHub Issues](https://github.com/PeachBiscuit174/PeachPaperLib/issues).
+* **Contributions:** [Pull Requests](https://github.com/PeachBiscuit174/PeachPaperLib/pulls) are welcome at any time.
+
+---
+
+## 🔄 Updates
+
+* **Update Checker:** The library checks for new versions every 12 hours. Server administrators (OPs) are gently notified upon joining if an update is available.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License – see the [LICENSE file](https://github.com/PeachBiscuit174/PeachPaperLib/blob/master/LICENSE) for details.
+
+<br>
+
+---
+---
+
+<br>
+
+# 🍑 PeachPaperLib (Deutsch)
+
+Eine PaperMC-Library.
 
 > [!IMPORTANT]
 > **Projekt-Status:** Dies ist ein **Freizeitprojekt**. Updates und Support erfolgen nach zeitlicher Verfügbarkeit und Lust. Es besteht kein Anspruch auf sofortige Fehlerbehebung, jedoch sind Feedback und Interaktion ausdrücklich erwünscht!
@@ -14,7 +104,7 @@ Eine PaperMC-Library;
 | **Plattform** | PaperMC und forks davon |
 | **Java Version** | 21+ |
 
-*Hinweis: Es wird offiziell immer nur die oben genannte Version unterstützt von der aktuelsten Library. Andere Versionen können funktionieren, werden aber nicht aktiv getestet.*
+*Hinweis: Es wird offiziell immer nur die oben genannte Version von der aktuellsten Library unterstützt. Andere Versionen können funktionieren, werden aber nicht aktiv getestet.*
 
 ---
 
@@ -25,23 +115,22 @@ Füge die Library über **JitPack** zu deinem Projekt hinzu.
 
 ### Maven (`pom.xml`)
 ```xml
-	<repositories>
-		<repository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
-		</repository>
-	</repositories>
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>[https://jitpack.io](https://jitpack.io)</url>
+        </repository>
+    </repositories>
 
-	<dependency>
-	    <groupId>com.github.PeachBiscuit174</groupId>
-	    <artifactId>PeachPaperLib</artifactId>
-	    <version>v1.0.0</version>
-	</dependency>
-
+    <dependency>
+        <groupId>com.github.PeachBiscuit174</groupId>
+        <artifactId>PeachPaperLib</artifactId>
+        <version>v1.0.0</version>
+    </dependency>
 ```
 
 > [!IMPORTANT]
-> Damit die Library korrekt geladen wird, füge sie auch als Dependency hinzu in deiner plugin.yml oder paper-plugin.yml
+> Damit die Library korrekt geladen wird, füge sie auch als Dependency hinzu in deiner `plugin.yml` oder `paper-plugin.yml`.
 
 ---
 
@@ -51,27 +140,30 @@ Die Nutzung erfolgt zentral über die Klasse `API`.
 
 **Beispiel:**
 ```java
-// Erstellt einen ItemStack eines Kopfes via Base64-String
+// Erstellt einen ItemStack eines Kopfes mit einem Base64 String
 ItemStack head = API.getCustomThingsManager().getCustomHeadUtils().getCustomHead("eyJ0ZXh0dXJlcyI6...");
+```
+or
+```java
+CustomHeadsAPI customHeadsAPI = API.getCustomThingsManager().getCustomHeadUtils();
+ItemStack head = customHeadsAPI.getCustomHead("eyJ0ZXh0dXJlcyI6...");
 ```
 
 ---
 
-## 💡Features & Support
+## 💡 Features & Support
 
 Obwohl dies ein Freizeitprojekt ist, ist deine Meinung wichtig!
 
-  **Feature-Wünsche:** Du hast eine Idee für ein neues Tool? Erstelle gerne ein Issue mit dem Label enhancement. Ich schaue es mir an, sobald ich Zeit finde!
-
-  **Bug Reports:** Falls etwas nicht funktioniert, melde es bitte über die [GitHub Issues](https://github.com/PeachBiscuit174/PeachPaperLib/issues).
-
-  **Beiträge:** [Pull Requests](https://github.com/PeachBiscuit174/PeachPaperLib/pulls) sind jederzeit willkommen.
+* **Feature-Wünsche:** Du hast eine Idee für ein neues Tool? Erstelle gerne ein Issue mit dem Label `enhancement`. Ich schaue es mir an, sobald ich Zeit finde!
+* **Bug Reports:** Falls etwas nicht funktioniert, melde es bitte über die [GitHub Issues](https://github.com/PeachBiscuit174/PeachPaperLib/issues).
+* **Beiträge:** [Pull Requests](https://github.com/PeachBiscuit174/PeachPaperLib/pulls) sind jederzeit willkommen.
 
 ---
 
 ## 🔄 Updates
 
-  **Update-Checker:** Die Library prüft alle 12 Stunden auf neue Versionen. Server-Administratoren (OP) werden beim Joinen dezent benachrichtigt, falls ein Update verfügbar ist.
+* **Update-Checker:** Die Library prüft alle 12 Stunden auf neue Versionen. Server-Administratoren (OP) werden beim Joinen dezent benachrichtigt, falls ein Update verfügbar ist.
 
 ---
 
