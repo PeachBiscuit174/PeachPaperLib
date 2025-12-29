@@ -143,7 +143,7 @@ Die Nutzung erfolgt zentral über die Klasse `API`.
 // Erstellt einen ItemStack eines Kopfes mit einem Base64 String
 ItemStack head = API.getCustomThingsManager().getCustomHeadUtils().getCustomHead("eyJ0ZXh0dXJlcyI6...");
 ```
-or
+oder
 ```java
 CustomHeadsAPI customHeadsAPI = API.getCustomThingsManager().getCustomHeadUtils();
 ItemStack head = customHeadsAPI.getCustomHead("eyJ0ZXh0dXJlcyI6...");
