@@ -1,0 +1,170 @@
+package de.peachbiscuit174.peachpaperlib.items;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+
+/**
+ * A powerful builder for ItemStacks, integrating with ItemLore.
+ * With MiniMessage support
+ *
+ * @author peachbiscuit174
+ * @since 1.0.0
+ */
+public class ItemBuilder {
+
+    private final ItemStack itemStack;
+    private final ItemMeta itemMeta;
+    private static final MiniMessage MM = MiniMessage.miniMessage();
+
+    public ItemBuilder(@NotNull Material material) {
+        this.itemStack = new ItemStack(material);
+        this.itemMeta = itemStack.getItemMeta();
+    }
+
+    public ItemBuilder(@NotNull ItemStack itemStack) {
+        this.itemStack = itemStack.clone();
+        this.itemMeta = this.itemStack.getItemMeta();
+    }
+
+    /**
+     * Sets the display name of the item.
+     *
+     * @param displayName The name.
+     * @return The current ItemBuilder instance.
+     */
+    public ItemBuilder setDisplayName(@NotNull String displayName) {
+        if (itemMeta != null) {
+            itemMeta.displayName(MM.deserialize(displayName).decoration(TextDecoration.ITALIC, false));
+        }
+        return this;
+    }
+
+    /**
+     * Integrates the ItemLore class directly.
+     *
+     * @param itemLore The ItemLore instance to use.
+     * @return The current ItemBuilder instance.
+     */
+    public ItemBuilder lore(@NotNull ItemLore itemLore) {
+        if (itemMeta != null) {
+            List<Component> lore_list = itemLore.build();
+            List<Component> finalLore = new ArrayList<>();
+            for (Component lore : lore_list) {
+                lore = lore.decoration(TextDecoration.ITALIC, false);
+                finalLore.add(lore);
+            }
+
+            itemMeta.lore(finalLore);
+        }
+        return this;
+    }
+
+    /**
+     * Sets the lore using a list of existing {@link Component}s.
+     * <p>
+     * Note: If you want to use MiniMessage formatting, the components should be
+     * deserialized before passing them to this method.
+     * </p>
+     *
+     * @param components A list of {@link Component}s to be used as lore.
+     * @return The current ItemBuilder instance;
+     */
+    public ItemBuilder lore(@NotNull List<Component> components) {
+        if (itemMeta != null) {
+            List<Component> finalLore = new ArrayList<>();
+            for (Component lore : components) {
+                lore = lore.decoration(TextDecoration.ITALIC, false);
+                finalLore.add(lore);
+            }
+
+            itemMeta.lore(finalLore);
+        }
+        return this;
+    }
+
+    /**
+     *
+     * @param enchantment The Enchantment to Enchant
+     * @param level The Level of The Enchantment
+     * @param ignoreLevelRestriction If the restriction of the Maximum Enchantment Level of Minecraft should be ignored
+     @return The current ItemBuilder instance.
+     */
+    public ItemBuilder enchant(@NotNull Enchantment enchantment, int level, boolean ignoreLevelRestriction) {
+        if (itemMeta != null) {
+            itemMeta.addEnchant(enchantment, level, ignoreLevelRestriction);
+        }
+        return this;
+    }
+
+    /**
+     * Adds ItemFlags to the item.
+     *
+     * @param flags The flags to add.
+     * @return The current ItemBuilder instance.
+     */
+    public ItemBuilder flags(@NotNull ItemFlag... flags) {
+        if (itemMeta != null) {
+            itemMeta.addItemFlags(flags);
+        }
+        return this;
+    }
+
+    /**
+     * Sets whether the item should be unbreakable.
+     *
+     * @param unbreakable True if the item should not break.
+     * @return The current ItemBuilder instance.
+     */
+    public ItemBuilder unbreakable(boolean unbreakable) {
+        if (itemMeta != null) {
+            itemMeta.setUnbreakable(unbreakable);
+        }
+        return this;
+    }
+
+    /**
+     * Allows editing of specialized {@link ItemMeta} sub-interfaces (e.g., {@link org.bukkit.inventory.meta.LeatherArmorMeta},
+     * {@link org.bukkit.inventory.meta.SkullMeta}, or {@link org.bukkit.inventory.meta.BookMeta}).
+     * <p>
+     * This method internally checks if the current ItemMeta is an instance of the provided class.
+     * If compatible, the provided {@link Consumer} is executed with the casted meta object.
+     * </p>
+     *
+     * <p><b>Example:</b></p>
+     * <pre>
+     * builder.editMeta(LeatherArmorMeta.class, meta -> meta.setColor(Color.RED));
+     * </pre>
+     *
+     * @param <T>       The type of ItemMeta to be edited.
+     * @param metaClass The class object of type T (e.g., {@code SkullMeta.class}).
+     * @param consumer  A {@link Consumer} containing the logic to modify the meta.
+     * @return The current {@link ItemBuilder} instance for method chaining.
+     */
+    public <T extends ItemMeta> ItemBuilder editMeta(@NotNull Class<T> metaClass, @NotNull Consumer<T> consumer) {
+        if (metaClass.isInstance(itemMeta)) {
+            consumer.accept(metaClass.cast(itemMeta));
+        }
+        return this;
+    }
+
+    /**
+     * Builds the final ItemStack.
+     *
+     * @return The finished {@link ItemStack}.
+     */
+    public @NotNull ItemStack build() {
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+    }
+}
