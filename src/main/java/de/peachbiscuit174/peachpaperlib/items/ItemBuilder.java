@@ -180,10 +180,8 @@ public class ItemBuilder {
      */
     @Experimental
     public ItemBuilder setCustomModelData(float customModelData) {
-        if (itemStack != null) {
-            if (!itemStack.hasData(DataComponentTypes.CUSTOM_MODEL_DATA)) {
-                itemStack.setData(DataComponentTypes.CUSTOM_MODEL_DATA, CustomModelData.customModelData().addFloat(customModelData).addFlag(true).build());
-            }
+        if (customModelData >= 0) {
+            this.customModelData = customModelData;
         }
         return this;
     }
@@ -200,10 +198,8 @@ public class ItemBuilder {
      */
     @Deprecated
     public ItemBuilder setCustomModelData(int customModelData) {
-        if (itemMeta != null) {
-            if (!itemMeta.hasCustomModelData()) {
-                itemMeta.setCustomModelData(customModelData);
-            }
+        if (customModelData >= 0) {
+            this.customModelDataLegacy = customModelData;
         }
         return this;
     }
