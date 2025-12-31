@@ -8,11 +8,11 @@ A PaperMC Library.
 ---
 
 ### 📌 Compatibility
-| Feature | Status |
-| :--- | :--- |
-| **Supported MC Version** | **1.21.10** |
+| Feature | Status            |
+| :--- |:------------------|
+| **Supported MC Version** | **1.21.11**       |
 | **Platform** | PaperMC and forks |
-| **Java Version** | 21+ |
+| **Java Version** | 21+               |
 
 *Note: Only the version listed above is officially supported by the latest library version. Other versions might work but are not actively tested.*
 
@@ -35,7 +35,7 @@ Add the library to your project via **JitPack**.
     <dependency>
         <groupId>com.github.PeachBiscuit174</groupId>
         <artifactId>PeachPaperLib</artifactId>
-        <version>v1.0.0-SNAPSHOT2</version>
+        <version>v1.0.0-SNAPSHOT3</version>
     </dependency>
 ```
 
@@ -125,11 +125,11 @@ Eine PaperMC-Library.
 ---
 
 ### 📌 Kompatibilität
-| Feature | Status |
-| :--- | :--- |
-| **Unterstützte MC-Version** | **1.21.10** |
+| Feature | Status                  |
+| :--- |:------------------------|
+| **Unterstützte MC-Version** | **1.21.11**             |
 | **Plattform** | PaperMC und forks davon |
-| **Java Version** | 21+ |
+| **Java Version** | 21+                     |
 
 *Hinweis: Es wird offiziell immer nur die oben genannte Version von der aktuellsten Library unterstützt. Andere Versionen können funktionieren, werden aber nicht aktiv getestet.*
 
@@ -152,7 +152,7 @@ Füge die Library über **JitPack** zu deinem Projekt hinzu.
     <dependency>
         <groupId>com.github.PeachBiscuit174</groupId>
         <artifactId>PeachPaperLib</artifactId>
-        <version>v1.0.0-SNAPSHOT2</version>
+        <version>v1.0.0-SNAPSHOT3</version>
     </dependency>
 ```
 

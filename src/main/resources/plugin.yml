@@ -1,6 +1,6 @@
 name: PeachPaperLib
-version: '1.0.0-SNAPSHOT2'
+version: '1.0.0-SNAPSHOT3'
 main: de.peachbiscuit174.peachpaperlib.PeachPaperLib
-api-version: '1.21'
+api-version: '1.21.11'
 authors: [ PeachBiscuit174 :D ]
 description: PeachPaperLib (PPL)

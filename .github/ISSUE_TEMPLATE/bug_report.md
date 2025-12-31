@@ -24,7 +24,7 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Server (please complete the following information):**
- - Minecraft Version [e.g. Paper 1.21.1 build 129]
+ - Minecraft Version [e.g. Paper 1.21.11 build 69]
  - Java Version [e.g. Java 21]
  - Version [e.g. 1.0.0]
 

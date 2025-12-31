@@ -38,6 +38,19 @@ public class ItemBuilder {
     }
 
     /**
+     * Creates a deep copy of the current ItemBuilder state.
+     * <p>
+     * This is useful if you want to create multiple variations of an item
+     * based on a single template.
+     * </p>
+     *
+     * @return A new ItemBuilder instance with identical data.
+     */
+    public @NotNull ItemBuilder copy() {
+        return new ItemBuilder(this.build());
+    }
+
+    /**
      * Sets the display name of the item.
      *
      * @param displayName The name.
@@ -129,6 +142,24 @@ public class ItemBuilder {
     public ItemBuilder unbreakable(boolean unbreakable) {
         if (itemMeta != null) {
             itemMeta.setUnbreakable(unbreakable);
+        }
+        return this;
+    }
+
+    /**
+     * Applies a custom model data ID to the item if it does not already have one.
+     * <p>
+     * This method utilizes the deprecated setCustomModelData method
+     * The int value provided serves as the primary identifier for resource pack overrides.
+     * </p>
+     * @param customModelData The numerical ID (int) to be used for the custom model.
+     * @return The current ItemBuilder instance.
+     */
+    public ItemBuilder setCustomModelData(int customModelData) {
+        if (itemMeta != null) {
+            if (!itemMeta.hasCustomModelData()) {
+                itemMeta.setCustomModelData(customModelData);
+            }
         }
         return this;
     }
