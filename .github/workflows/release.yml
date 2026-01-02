@@ -8,8 +8,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pages: write
-      id-token: write
 
     steps:
       - name: Checkout code
@@ -29,15 +27,7 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Build with Maven
-        run: |
-          mvn clean package -f pom.xml
-          mvn javadoc:javadoc -f pom.xml
-
-      - name: Deploy Javadocs to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          folder: target/site/apidocs
-          branch: gh-pages
+        run: mvn clean package -f pom.xml
 
       - name: Create GitHub Release
         id: create_release
