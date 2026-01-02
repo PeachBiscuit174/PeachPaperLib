@@ -43,8 +43,6 @@
                 </executions>
                 <configuration>
                     <doclint>none</doclint>
-                    <reportOutputDirectory>${project.build.directory}/site</reportOutputDirectory>
-                    <destDir>apidocs</destDir>
                 </configuration>
             </plugin>
 
