@@ -77,6 +77,19 @@ Even though this is a hobby project, your opinion matters!
 
 ---
 
+## ⚖️ Legal & Privacy (English)
+
+**Disclaimer:** PeachPaperLib is **not** an official Minecraft product. It is not approved by or associated with Mojang or Microsoft. Minecraft is a trademark of Mojang Synergies AB.
+
+**Privacy Notice:** This library uses the following third-party services to improve developer and administrator experience:
+
+- **bStats:** Collects anonymous technical data (e.g., server version, Java version) to provide usage statistics. Data is anonymized and compliant with GDPR.
+
+- **GitHub/JitPack:** The built-in Update Checker connects to GitHub's APIs to check for new versions. This involves transmitting the server's IP address to GitHub/JitPack during the request.
+
+
+---
+
 ## 📄 License & Transparency
 
 License: This project is licensed under the MIT License – see the [LICENSE file](https://github.com/PeachBiscuit174/PeachPaperLib/blob/master/LICENSE) for details.
@@ -193,6 +206,19 @@ Obwohl dies ein Freizeitprojekt ist, ist deine Meinung wichtig!
 ## 🔄 Updates
 
 * **Update-Checker:** Die Library prüft alle 12 Stunden auf neue Versionen. Server-Administratoren (OP) werden beim Joinen dezent benachrichtigt, falls ein Update verfügbar ist.
+
+---
+
+## ⚖️ Rechtliches & Datenschutz (Deutsch)
+
+**Haftungsausschluss:** PeachPaperLib ist **kein** offizielles Minecraft-Produkt. Es ist nicht von Mojang oder Microsoft genehmigt und steht nicht mit ihnen in Verbindung. Minecraft ist eine Marke von Mojang Synergies AB.
+
+**Datenschutzhinweis:** Diese Library nutzt folgende Dienste von Drittanbietern, um die Erfahrung für Entwickler und Administratoren zu verbessern:
+
+- **bStats:** Sammelt anonyme technische Daten (z. B. Serverversion, Java-Version), um Nutzungsstatistiken zu erstellen. Die Daten werden anonymisiert und gemäß DSGVO verarbeitet.
+
+- **GitHub/JitPack:** Der integrierte Update-Checker verbindet sich mit den APIs von GitHub, um nach neuen Versionen zu suchen. Dabei wird technisch bedingt die IP-Adresse des Servers an GitHub/JitPack übertragen.
+
 
 ---
 
