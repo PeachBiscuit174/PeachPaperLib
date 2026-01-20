@@ -7,7 +7,7 @@ public class GUIManager {
     private final InventoryGUIAPI inventoryGUIAPI = new InventoryGUIAPI();
 
     public InventoryGUIAPI getInventoryGUIAPI() {
-        return getInventoryGUIAPI();
+        return inventoryGUIAPI;
     }
 
 }

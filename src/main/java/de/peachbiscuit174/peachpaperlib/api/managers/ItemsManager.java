@@ -2,6 +2,7 @@ package de.peachbiscuit174.peachpaperlib.api.managers;
 
 import de.peachbiscuit174.peachpaperlib.api.items.CustomHeadsAPI;
 import de.peachbiscuit174.peachpaperlib.api.items.ItemBuilderAPI;
+import de.peachbiscuit174.peachpaperlib.api.items.ItemSerializerAPI;
 import de.peachbiscuit174.peachpaperlib.items.ItemLore;
 
 /**
@@ -22,5 +23,10 @@ public class ItemsManager {
     private final CustomHeadsAPI headUtils = new CustomHeadsAPI();
     public CustomHeadsAPI getCustomHeadsAPI() {
         return headUtils;
+    }
+
+    private final ItemSerializerAPI itemSerializerAPI = new ItemSerializerAPI();
+    public ItemSerializerAPI getItemSerializerAPI() {
+        return itemSerializerAPI;
     }
 }
