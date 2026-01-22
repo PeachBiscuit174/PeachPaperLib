@@ -37,6 +37,8 @@ public class InventoryGUI implements InventoryHolder {
     private final Inventory inventory;
     private final Map<Integer, GUIButton> buttons = new HashMap<>();
     private static final MiniMessage MM = MiniMessage.miniMessage();
+    private String[] shape;
+    private final Map<Character, GUIButton> charMapping = new HashMap<>();
 
     /**
      * The tag key used to identify items that should not be removed from the GUI.
@@ -109,6 +111,70 @@ public class InventoryGUI implements InventoryHolder {
         for (int i = 0; i < inventory.getSize(); i++) {
             if (inventory.getItem(i) == null) {
                 setPlaceholder(i, builder.copy(), id);
+            }
+        }
+    }
+
+    /**
+     * Defines the visual layout of the GUI using a pattern of strings.
+     * Each string represents a row in the inventory.
+     *
+     * @param rows The layout pattern (e.g., "#########", "#  X  #").
+     * @return The current instance for fluent chaining.
+     */
+    public InventoryGUI shape(String... rows) {
+        this.shape = rows;
+        applyShape();
+        return this;
+    }
+
+    /**
+     * Maps a character used in the {@link #shape(String...)} method to a specific GUIButton.
+     *
+     * @param key    The character key used in the shape pattern.
+     * @param button The button to be placed at every occurrence of the key.
+     * @return The current instance for fluent chaining.
+     */
+    public InventoryGUI map(char key, GUIButton button) {
+        this.charMapping.put(key, button);
+        applyShape();
+        return this;
+    }
+
+    /**
+     * Maps a character used in the {@link #shape(String...)} method to a decorative
+     * item (placeholder) without a click action.
+     * <p>
+     * This is a shorthand for {@link #map(char, GUIButton)} and is ideal for
+     * background items or borders.
+     * </p>
+     *
+     * @param key     The character key used in the shape pattern.
+     * @param builder The {@link ItemBuilder} defining the appearance of the placeholder.
+     * @param id      A unique identification tag for the item.
+     * @return The current instance for fluent chaining.
+     */
+    public InventoryGUI mapPlaceholder(char key, @NotNull ItemBuilder builder, @NotNull String id) {
+        this.charMapping.put(key, new GUIButton(builder, id, null));
+        applyShape();
+        return this;
+    }
+
+    /**
+     * Internally processes the shape and mapping to populate the inventory with buttons.
+     */
+    private void applyShape() {
+        if (shape == null || shape.length == 0) return;
+
+        int maxRowsInInv = inventory.getSize() / 9;
+        for (int row = 0; row < Math.min(maxRowsInInv, shape.length); row++) {
+            String rowString = shape[row];
+            for (int col = 0; col < Math.min(9, rowString.length()); col++) {
+                char c = rowString.charAt(col);
+                if (charMapping.containsKey(c)) {
+                    int slot = (row * 9) + col;
+                    setButton(slot, charMapping.get(c));
+                }
             }
         }
     }

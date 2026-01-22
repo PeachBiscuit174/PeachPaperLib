@@ -28,9 +28,9 @@ public class API {
         return playerManager;
     }
 
-    private static final GUIManager getGUIManager = new GUIManager();
+    private static final GUIManager GUIManager = new GUIManager();
 
-    public static GUIManager getGetGUIManager() {
-        return getGUIManager;
+    public static GUIManager getGUIManager() {
+        return GUIManager;
     }
 }

@@ -3,23 +3,20 @@ package de.peachbiscuit174.peachpaperlib.scheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 /**
  * A high-performance, resource-efficient scheduler for Minecraft libraries.
- * It manages thread pools independently of the Bukkit Lifecycle and
- * provides a centralized synchronization system.
- * * <p>Key features:</p>
- * <ul>
- * <li>Dynamic thread pool (0-8 threads) with 60s idle timeout.</li>
- * <li>Centralized sync task to reduce main thread overhead.</li>
- * <li>Safe player interaction wrappers.</li>
- * </ul>
+ * Manages independent thread pools and provides centralized synchronization
+ * with the Bukkit main thread.
+ *
  * @author peachbiscuit174
  * @since 1.0.0
  */
@@ -32,94 +29,119 @@ public class LibraryScheduler {
     private final AtomicBoolean isShutdown = new AtomicBoolean(false);
 
     /**
-     * Initializes the scheduler for a library plugin.
+     * Initializes the scheduler with named thread factories and efficient pooling.
+     * Starts a Bukkit task to process the internal sync queue every tick.
      *
-     * @param libraryOwner The plugin providing this scheduler instance.
+     * @param libraryOwner The plugin instance owning this scheduler.
      */
-    public LibraryScheduler(Plugin libraryOwner) {
+    public LibraryScheduler(@NotNull Plugin libraryOwner) {
         this.libraryOwner = libraryOwner;
 
-        // Efficient async pool: Only creates threads when needed (up to 8)
+        // Named Thread Factory for better debugging and profiling
+        ThreadFactory asyncFactory = new ThreadFactory() {
+            private final AtomicInteger counter = new AtomicInteger(1);
+            @Override
+            public Thread newThread(@NotNull Runnable r) {
+                return new Thread(r, "PPL-Async-" + counter.getAndIncrement());
+            }
+        };
+
+        // Optimized Pool: core threads for stability, max threads for peaks, 60s idle timeout
         this.asyncExecutor = new ThreadPoolExecutor(
-                0, 8, 60L, TimeUnit.SECONDS,
-                new SynchronousQueue<>(),
+                2, 8, 60L, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(1024),
+                asyncFactory,
                 new ThreadPoolExecutor.CallerRunsPolicy()
         );
 
-        // Low-overhead scheduler for timing logic
-        this.timerService = Executors.newSingleThreadScheduledExecutor();
+        this.timerService = Executors.newSingleThreadScheduledExecutor(r ->
+                new Thread(r, "PPL-Timer"));
 
-        // Central Bukkit task that processes all sync requests at once
+        // Central task to process the sync queue every tick (approx. every 50ms)
         Bukkit.getScheduler().runTaskTimer(libraryOwner, this::processSyncQueue, 1L, 1L);
     }
 
-    // --- BASIC EXECUTION ---
+    // --- EXECUTION METHODS ---
 
     /**
-     * Runs a task on the main server thread in the next tick.
-     * @param runnable The code to execute.
+     * Schedules a task to be executed on the Bukkit main thread in the next tick.
+     *
+     * @param runnable The task to execute.
      */
-    public void runSync(Runnable runnable) {
+    public void runSync(@NotNull Runnable runnable) {
         if (!isShutdown.get()) syncQueue.add(runnable);
     }
 
     /**
-     * Runs a task asynchronously using the library pool.
-     * @param runnable The code to execute.
+     * Executes a task asynchronously using the internal thread pool.
+     *
+     * @param runnable The task to execute.
      */
-    public void runAsync(Runnable runnable) {
+    public void runAsync(@NotNull Runnable runnable) {
         if (!isShutdown.get()) asyncExecutor.execute(runnable);
     }
 
-    // --- DELAYED EXECUTION ---
+    // --- DELAYED & REPEATING ---
 
     /**
-     * Runs a task on the main thread after a specific delay.
-     * <pre>{@code
-     * scheduler.runSyncDelayed(() -> player.kickPlayer("Time's up!"), 5, TimeUnit.MINUTES);
-     * }</pre>
+     * Schedules a task for synchronous execution after a specific delay.
+     *
+     * @param runnable The task to execute.
+     * @param delay    The time to delay.
+     * @param unit     The unit of the delay parameter.
+     * @return A ScheduledFuture representing pending completion of the task.
      */
-    public Task runSyncDelayed(Runnable runnable, long delay, TimeUnit unit) {
-        return scheduleInternal(new Task(false), runnable, delay, 0, unit, true);
+    public ScheduledFuture<?> runSyncDelayed(Runnable runnable, long delay, TimeUnit unit) {
+        return timerService.schedule(() -> runSync(runnable), delay, unit);
     }
 
     /**
-     * Runs a task asynchronously after a specific delay.
+     * Schedules a task for asynchronous execution after a specific delay.
+     *
+     * @param runnable The task to execute.
+     * @param delay    The time to delay.
+     * @param unit     The unit of the delay parameter.
+     * @return A ScheduledFuture representing pending completion of the task.
      */
-    public Task runAsyncDelayed(Runnable runnable, long delay, TimeUnit unit) {
-        return scheduleInternal(new Task(false), runnable, delay, 0, unit, false);
-    }
-
-    // --- REPEATING EXECUTION ---
-
-    /**
-     * Runs a repeating task on the main thread.
-     * <pre>{@code
-     * scheduler.runSyncRepeating(() -> player.sendMessage("Reminder!"), 0, 30, TimeUnit.SECONDS);
-     * }</pre>
-     */
-    public Task runSyncRepeating(Runnable runnable, long initialDelay, long period, TimeUnit unit) {
-        return scheduleInternal(new Task(true), runnable, initialDelay, period, unit, true);
+    public ScheduledFuture<?> runAsyncDelayed(Runnable runnable, long delay, TimeUnit unit) {
+        return timerService.schedule(() -> runAsync(runnable), delay, unit);
     }
 
     /**
-     * Runs a repeating task asynchronously.
+     * Schedules a task for synchronous execution that repeats at a fixed rate.
+     *
+     * @param runnable The task to execute.
+     * @param delay    The time to delay first execution.
+     * @param period   The period between successive executions.
+     * @param unit     The unit of the delay and period parameters.
+     * @return A ScheduledFuture representing pending completion of the series of repeated tasks.
      */
-    public Task runAsyncRepeating(Runnable runnable, long initialDelay, long period, TimeUnit unit) {
-        return scheduleInternal(new Task(true), runnable, initialDelay, period, unit, false);
+    public ScheduledFuture<?> runSyncRepeating(Runnable runnable, long delay, long period, TimeUnit unit) {
+        return timerService.scheduleAtFixedRate(() -> runSync(runnable), delay, period, unit);
     }
 
-    // --- SPECIALIZED WRAPPERS ---
+    /**
+     * Schedules a task for asynchronous execution that repeats at a fixed rate.
+     *
+     * @param runnable The task to execute.
+     * @param delay    The time to delay first execution.
+     * @param period   The period between successive executions.
+     * @param unit     The unit of the delay and period parameters.
+     * @return A ScheduledFuture representing pending completion of the series of repeated tasks.
+     */
+    public ScheduledFuture<?> runAsyncRepeating(Runnable runnable, long delay, long period, TimeUnit unit) {
+        return timerService.scheduleAtFixedRate(() -> runAsync(runnable), delay, period, unit);
+    }
+
+    // --- UTILITIES ---
 
     /**
-     * Executes a task only if the player is online. Always runs on the main thread.
-     * <pre>{@code
-     * scheduler.runSafe(uuid, player -> player.setLevel(10));
-     * }</pre>
-     * * @param uuid The player's UUID.
-     * @param task Logic to execute with the online player.
+     * Safely executes a task on the main thread only if the specified player is online.
+     *
+     * @param uuid The UUID of the player.
+     * @param task The logic to run with the player instance.
      */
-    public void runSafe(UUID uuid, Consumer<Player> task) {
+    public void runSafe(@NotNull UUID uuid, @NotNull Consumer<Player> task) {
         runSync(() -> {
             Player player = Bukkit.getPlayer(uuid);
             if (player != null && player.isOnline()) {
@@ -128,46 +150,40 @@ public class LibraryScheduler {
         });
     }
 
-    // --- INTERNAL MANAGEMENT ---
-
-    private Task scheduleInternal(Task task, Runnable runnable, long delay, long period, TimeUnit unit, boolean sync) {
-        if (isShutdown.get() || task.isCancelled()) return task;
-
-        timerService.schedule(() -> {
-            if (task.isCancelled()) return;
-
-            if (sync) runSync(runnable);
-            else runAsync(runnable);
-
-            if (task.isRepeating()) {
-                scheduleInternal(task, runnable, period, period, unit, sync);
-            }
-        }, delay, unit);
-
-        return task;
-    }
-
+    /**
+     * Processes all pending tasks in the sync queue.
+     * Executed by the central Bukkit timer task.
+     */
     private void processSyncQueue() {
-        while (!syncQueue.isEmpty()) {
-            Runnable task = syncQueue.poll();
-            if (task != null) {
-                try {
-                    task.run();
-                } catch (Exception e) {
-                    libraryOwner.getLogger().severe("Exception in Library Task: " + e.getMessage());
-                }
+        Runnable task;
+        while ((task = syncQueue.poll()) != null) {
+            try {
+                task.run();
+            } catch (Exception e) {
+                libraryOwner.getLogger().severe("Error in PPL Sync Task: " + e.getMessage());
+                e.printStackTrace();
             }
         }
     }
 
     /**
-     * Shuts down all executors and flushes the sync queue.
-     * Must be called in onDisable().
+     * Gracefully shuts down the internal executors and processes the remaining sync queue.
+     * This is be called in the PeachPaperLib plugin's {@code onDisable()} method.
      */
     public void shutdown() {
         if (isShutdown.getAndSet(true)) return;
-        asyncExecutor.shutdownNow();
-        timerService.shutdownNow();
+
+        timerService.shutdown();
+        asyncExecutor.shutdown();
+        try {
+            // Wait for existing tasks to terminate
+            if (!asyncExecutor.awaitTermination(10, TimeUnit.SECONDS)) {
+                asyncExecutor.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            asyncExecutor.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
         processSyncQueue();
     }
 }

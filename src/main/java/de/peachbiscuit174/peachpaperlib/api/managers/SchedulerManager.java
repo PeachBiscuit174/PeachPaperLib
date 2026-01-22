@@ -9,7 +9,7 @@ import de.peachbiscuit174.peachpaperlib.scheduler.LibraryScheduler;
  */
 public class SchedulerManager {
 
-    private final LibraryScheduler scheduler = new LibraryScheduler(PeachPaperLib.getPlugin());
+    private final LibraryScheduler scheduler = PeachPaperLib.getScheduler();
 
     public LibraryScheduler getScheduler() {
         return scheduler;
