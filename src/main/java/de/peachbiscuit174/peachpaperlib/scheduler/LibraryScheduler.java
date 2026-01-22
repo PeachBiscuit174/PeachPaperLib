@@ -1,8 +1,10 @@
 package de.peachbiscuit174.peachpaperlib.scheduler;
 
+import de.peachbiscuit174.peachpaperlib.PeachPaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Queue;
@@ -14,14 +16,17 @@ import java.util.function.Consumer;
 
 /**
  * A high-performance, resource-efficient scheduler for Minecraft libraries.
- * Manages independent thread pools and provides centralized synchronization
- * with the Bukkit main thread.
+ * Manages independent thread pools and provides centralized synchronization.
+ * * <p><b>Note:</b> Do not instantiate this class manually. Use the provided
+ * API access point instead to ensure resource sharing:
+ * {@code API.getSchedulerManager().getScheduler()}</p>
  *
  * @author peachbiscuit174
  * @since 1.0.0
  */
 public class LibraryScheduler {
 
+    private static boolean instantiated = false;
     private final Plugin libraryOwner;
     private final ThreadPoolExecutor asyncExecutor;
     private final ScheduledExecutorService timerService;
@@ -29,13 +34,23 @@ public class LibraryScheduler {
     private final AtomicBoolean isShutdown = new AtomicBoolean(false);
 
     /**
-     * Initializes the scheduler with named thread factories and efficient pooling.
-     * Starts a Bukkit task to process the internal sync queue every tick.
+     * Internal constructor for the scheduler.
+     * <p><b>Warning:</b> Manual instantiation is discouraged to prevent
+     * thread pool duplication. Access this via the API instead.</p>
      *
      * @param libraryOwner The plugin instance owning this scheduler.
      */
+    @ApiStatus.Internal
     public LibraryScheduler(@NotNull Plugin libraryOwner) {
+        if (instantiated) {
+            throw new IllegalStateException("LibraryScheduler has already been instantiated! " +
+                    "Use API.getSchedulerManager().getScheduler() instead of creating a new one.");
+        }
+        if (libraryOwner != PeachPaperLib.getPlugin()) {
+            throw new IllegalStateException("Only the PeachPaperLib Plugin can initialize this!");
+        }
         this.libraryOwner = libraryOwner;
+        instantiated = true;
 
         // Named Thread Factory for better debugging and profiling
         ThreadFactory asyncFactory = new ThreadFactory() {
@@ -185,5 +200,6 @@ public class LibraryScheduler {
             Thread.currentThread().interrupt();
         }
         processSyncQueue();
+        instantiated = false;
     }
 }
