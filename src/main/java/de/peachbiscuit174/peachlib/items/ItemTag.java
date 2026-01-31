@@ -8,9 +8,19 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 
 public class ItemTag {
     private static final Plugin plugin = PeachLib.getPlugin();
+    private static final Map<String, NamespacedKey> keyCache = new ConcurrentHashMap<>();
+
+    private static NamespacedKey getKey(String key) {
+        return keyCache.computeIfAbsent(key, k ->
+                new NamespacedKey(plugin, k.toLowerCase().replace(" ", "_"))
+        );
+    }
 
     public static ItemStack setItemTag (ItemStack itemStack, String key) {
         if (itemStack != null && itemStack.getType().isItem()) {
@@ -18,9 +28,11 @@ public class ItemTag {
                 if (!isItemTag(itemStack, key)) {
                     ItemMeta meta = itemStack.getItemMeta();
                     if (meta != null) {
-                        NamespacedKey namespacedKey = new NamespacedKey(plugin, key.toLowerCase().replaceAll(" ", "_"));
-                        meta.getPersistentDataContainer().set(namespacedKey, PersistentDataType.BOOLEAN, true);
-                        itemStack.setItemMeta(meta);
+                        NamespacedKey namespacedKey = getKey(key);
+                        if (namespacedKey != null) {
+                            meta.getPersistentDataContainer().set(namespacedKey, PersistentDataType.BOOLEAN, true);
+                            itemStack.setItemMeta(meta);
+                        }
                     }
                 }
             }
@@ -34,10 +46,12 @@ public class ItemTag {
             if (key != null) {
                 ItemMeta meta = itemStack.getItemMeta();
                 if (meta != null) {
-                    NamespacedKey namespacedKey = new NamespacedKey(plugin, key.toLowerCase().replaceAll(" ", "_"));
-                    boolean value = meta.getPersistentDataContainer().has(namespacedKey, PersistentDataType.BOOLEAN);
-                    if (value) {
-                        check = true;
+                    NamespacedKey namespacedKey = getKey(key);
+                    if (namespacedKey != null) {
+                        boolean value = meta.getPersistentDataContainer().has(namespacedKey, PersistentDataType.BOOLEAN);
+                        if (value) {
+                            check = true;
+                        }
                     }
                 }
             }
@@ -51,9 +65,11 @@ public class ItemTag {
                 if (isItemTag(itemStack, key)) {
                     ItemMeta meta = itemStack.getItemMeta();
                     if (meta != null) {
-                        NamespacedKey namespacedKey = new NamespacedKey(plugin, key.toLowerCase().replaceAll(" ", "_"));
-                        meta.getPersistentDataContainer().remove(namespacedKey);
-                        itemStack.setItemMeta(meta);
+                        NamespacedKey namespacedKey = getKey(key);
+                        if (namespacedKey != null) {
+                            meta.getPersistentDataContainer().remove(namespacedKey);
+                            itemStack.setItemMeta(meta);
+                        }
                     }
                 }
             }
