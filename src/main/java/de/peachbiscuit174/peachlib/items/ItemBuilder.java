@@ -6,12 +6,12 @@ import de.peachbiscuit174.peachlib.api.items.ItemTagAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.apache.http.annotation.Experimental;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -185,7 +185,7 @@ public class ItemBuilder {
      * @param customModelData The numerical ID (int) to be used for the custom model.
      * @return The current ItemBuilder instance.
      */
-    @Experimental
+    @ApiStatus.Experimental
     public ItemBuilder setCustomModelData(float customModelData) {
         if (customModelData >= 0) {
             this.customModelData = customModelData;
